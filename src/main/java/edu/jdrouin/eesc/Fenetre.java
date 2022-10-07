@@ -92,9 +92,9 @@ public class Fenetre extends JFrame {
                 Utilisateur utilisateur = (Utilisateur) value;
                 setText(utilisateur.getNom() + " " + utilisateur.getPrenom());
                 if (isSelected) {
-                    setBackground(Color.PINK);
+                    setBackground(Color.green);
                 }
-                setFont(new Font("Roboto", Font.BOLD, 15));
+                setFont(new Font("Roboto", Font.BOLD, 11));
                 return this;
             }
         });
@@ -124,7 +124,8 @@ public class Fenetre extends JFrame {
 
         boxPrincipal.add(Box.createRigidArea(new Dimension(1,50)));
 
-        boxPrincipal.add(Champs.generate("Civilite", selectCivilite, selectUtilisateur));
+        boxPrincipal.add(Champs.generate("Civilite", selectCivilite));
+        boxPrincipal.add(Champs.generate("Utilisateur", selectUtilisateur));
 
 
         panneau.add(boutonFormulaire, BorderLayout.SOUTH);
@@ -136,7 +137,7 @@ public class Fenetre extends JFrame {
 
     }
 
-    public static void main(String[] args) throws UnsupportedLookAndFeelException {
+    public static void main(String[] args) {
         FlatDarculaLaf.setup();
 
         new Fenetre();
