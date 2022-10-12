@@ -10,14 +10,17 @@ public class HelperForm {
     public static final int ALIGN_RIGHT = 1;
     public static final int ALIGN_LEFT = 2;
 
+    public static Box generateField(String textLabel, Component component){
+        return generateField(textLabel, component, 200);
+    }
+
+
     public static Box generateField(String textLabel,
                                     Component component,
                                     int largeur) {
 
-        if(component instanceof JTextField){
+        if(component instanceof JTextField || component instanceof JComboBox){
             component.setPreferredSize(new Dimension(largeur, 30));
-            component.setMaximumSize(new Dimension(largeur, 30));
-        } else if (component instanceof JComboBox){
             component.setMaximumSize(new Dimension(largeur, 30));
         }
 
