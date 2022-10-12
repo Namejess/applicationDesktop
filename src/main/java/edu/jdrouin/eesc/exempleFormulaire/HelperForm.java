@@ -22,6 +22,10 @@ public class HelperForm {
         if(component instanceof JTextField || component instanceof JComboBox){
             component.setPreferredSize(new Dimension(largeur, 30));
             component.setMaximumSize(new Dimension(largeur, 30));
+        } else if(component instanceof ChampsSaisie champs){
+//            ChampsSaisie champs = (ChampsSaisie)component;
+            champs.setPreferredSize(new Dimension(largeur, 30));
+            champs.setMaximumSize(new Dimension(largeur, 30));
         }
 
         Box champs = Box.createHorizontalBox();

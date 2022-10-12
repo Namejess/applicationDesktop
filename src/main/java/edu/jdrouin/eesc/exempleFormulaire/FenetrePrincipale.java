@@ -76,11 +76,11 @@ public class FenetrePrincipale extends JFrame implements WindowListener {
 
 
         //---------- CHAMPS TEXT : NOM-------
-        JTextField champsNom = new JTextField();
+        ChampsSaisie champsNom = new ChampsSaisie();
         formulaire.add(HelperForm.generateField("Nom", champsNom));
 
         //---------- CHAMPS TEXT : PRENOM-------
-        JTextField champsPrenom = new JTextField();
+        ChampsSaisie champsPrenom = new ChampsSaisie();
         formulaire.add(HelperForm.generateField("Prenom", champsPrenom));
 
         //---------------LISTE PAYS-----------------
@@ -116,11 +116,7 @@ public class FenetrePrincipale extends JFrame implements WindowListener {
             }
         });
 
-
         formulaire.add(HelperForm.generateField("Pays", selectPays));
-
-
-
 
         JButton boutonValider = new JButton("Enregistrer");
 
@@ -131,14 +127,23 @@ public class FenetrePrincipale extends JFrame implements WindowListener {
 
             String message = "Le formulaire comporte des erreurs :";
 
+            champsNom.resetMessage();
+            champsPrenom.resetMessage();
+//            champsNom.setBorder(BorderFactory.createEmptyBorder());
+//            champsPrenom.setBorder(BorderFactory.createEmptyBorder());
+
+
             if (champsNom.getText().equals("")){
                 erreurNom = true;
                 message += "\n - Nom obligatoire";
+                champsNom.erreur("Champs obligatoire");
             }
 
             if(champsPrenom.getText().equals("")){
                 erreurPrenom = true;
                 message += "\n - Prenom obligatoire";
+                champsPrenom.erreur("Champs obligatoire");
+
             }
 
 //            message = message.substring(0, message.length()-2);
