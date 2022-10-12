@@ -76,12 +76,20 @@ public class FenetrePrincipale extends JFrame implements WindowListener {
 
 
         //---------- CHAMPS TEXT : NOM-------
-        ChampsSaisie champsNom = new ChampsSaisie();
+        ChampsSaisie champsNom = new ChampsSaisie("[\\p{L}\s]");
         formulaire.add(HelperForm.generateField("Nom", champsNom));
 
         //---------- CHAMPS TEXT : PRENOM-------
         ChampsSaisie champsPrenom = new ChampsSaisie();
         formulaire.add(HelperForm.generateField("Prenom", champsPrenom));
+
+        //---------- CHAMPS TEXT : EMAIL-------
+        ChampsSaisie champsEmail = new ChampsSaisie("[a-z0-9@\\.-]");
+        formulaire.add(HelperForm.generateField("Email", champsEmail));
+
+        //---------- CHAMPS TEXT : EMAIL-------
+        ChampsSaisie champsAge = new ChampsSaisie("[0-9]");
+        formulaire.add(HelperForm.generateField("Age", champsAge));
 
         //---------------LISTE PAYS-----------------
         Pays[] listePays = {
