@@ -13,7 +13,13 @@ public class Utilisateur implements Serializable {
     protected int age;
     protected boolean marie;
 
-    public Utilisateur(String nom, String prenom, String email, Pays pays, String civilite, int age, boolean marie) {
+
+    public Utilisateur(String nom, String prenom) {
+        this.nom = nom;
+        this.prenom = prenom;
+    }
+
+    public Utilisateur(String civilite, String nom, String prenom, String email, Pays pays, int age, boolean marie) {
         this.nom = nom;
         this.prenom = prenom;
         this.email = email;
@@ -21,14 +27,6 @@ public class Utilisateur implements Serializable {
         this.pays = pays;
         this.age = age;
         this.marie = marie;
-    }
-
-    public Utilisateur(String nom, String prenom) {
-        this.nom = nom;
-        this.prenom = prenom;
-    }
-
-    public Utilisateur(String selectedItem, String text, String text1, String text2, Pays selectedItem1, int parseInt, boolean selected) {
     }
 
     public String getNom() {
