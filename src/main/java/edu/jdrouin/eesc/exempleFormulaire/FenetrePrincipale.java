@@ -15,37 +15,21 @@ import java.io.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+
 public class FenetrePrincipale extends JFrame implements WindowListener {
 
     protected boolean themeSombreActif = true;
     protected int defaultMargin = 10;
+    protected JCheckBox champsMarie;
+    protected ChampsSaisie champsAge;
+    protected JComboBox<String> selectCivilite;
+    protected ChampsSaisie champsNom;
+    protected JComboBox<Pays> selectPays;
+    protected ChampsSaisie champsPrenom;
+    protected ChampsSaisie champsEmail;
 
     public FenetrePrincipale() {
 
-        //--------- GESTION ERREUR -----------
-        ObjectInputStream ois = null;
-
-        try {
-            final FileInputStream fichier = new FileInputStream("personne.eesc");
-            ois = new ObjectInputStream(fichier);
-            Utilisateur utilisateurFichier = (Utilisateur) ois.readObject();
-            System.out.println(utilisateurFichier.getNom());
-            ois.close();
-
-
-        } catch (FileNotFoundException e) {
-            System.out.println("Premiere fois qu'on ouvre l'application");
-
-        } catch (IOException e) {
-            JOptionPane.showMessageDialog(
-                    this,
-                    "Impossible d'ouvrir le fichier");
-
-        } catch (ClassNotFoundException | ClassCastException e) {
-            JOptionPane.showMessageDialog(
-                    this,
-                    "Fichier corrompu");
-        }
 
         //--------- CREATION ECRAN -----------
 
@@ -105,28 +89,28 @@ public class FenetrePrincipale extends JFrame implements WindowListener {
         //---------------- LISTE CIVILITE ------------------
 
         String[] listeCivilites = {"Monsieur","Madame","Mademoiselle","Autre"};
-        JComboBox<String> selectCivilite = new JComboBox<>(listeCivilites);
+        selectCivilite = new JComboBox<>(listeCivilites);
 
         formulaire.add(HelperForm.generateField(
                 "Civilité",selectCivilite));
 
         //---------------- CHAMPS TEXT : NOM ---------------
 
-        ChampsSaisie champsNom = new ChampsSaisie("[\\p{L}\s'-]");
+        champsNom = new ChampsSaisie("[\\p{L}\s'-]");
         formulaire.add(
                 HelperForm.generateField("Nom", champsNom)
         );
 
         //---------------- CHAMPS TEXT : PRENOM ---------------
 
-        ChampsSaisie champsPrenom = new ChampsSaisie("[\\p{L}\s'-]");
+        champsPrenom = new ChampsSaisie("[\\p{L}\s'-]");
         formulaire.add(
                 HelperForm.generateField("Prénom", champsPrenom)
         );
 
         //---------------- CHAMPS TEXT : EMAIL ---------------
 
-        ChampsSaisie champsEmail = new ChampsSaisie("[a-zA-Z0-9@\\.-]");
+        champsEmail = new ChampsSaisie("[a-zA-Z0-9@\\.-]");
         formulaire.add(
                 HelperForm.generateField("Email", champsEmail)
         );
@@ -139,7 +123,7 @@ public class FenetrePrincipale extends JFrame implements WindowListener {
                 new Pays("Allemagne", "DE", "de.png")
         };
 
-        JComboBox<Pays> selectPays = new JComboBox<>(listePays);
+        selectPays = new JComboBox<>(listePays);
 
         selectPays.setRenderer(new DefaultListCellRenderer(){
             @Override
@@ -174,13 +158,13 @@ public class FenetrePrincipale extends JFrame implements WindowListener {
 
         //---------------- CHAMPS TEXT : AGE ---------------
 
-        ChampsSaisie champsAge = new ChampsSaisie("[0-9]");
+        champsAge = new ChampsSaisie("[0-9]");
         formulaire.add(
                 HelperForm.generateField("Age", champsAge,50));
 
         //---------------- CHAMPS CHECKBOX : MARIE/PACSE ---------------
 
-        JCheckBox champsMarie = new JCheckBox();
+        champsMarie = new JCheckBox();
         formulaire.add(
                 HelperForm.generateField("Marie/pacse", champsMarie));
 
@@ -300,10 +284,7 @@ public class FenetrePrincipale extends JFrame implements WindowListener {
                 }
             }
 
-
-
         });
-
 
 
         //---------- BOUTONS DU BAS -------
@@ -314,8 +295,39 @@ public class FenetrePrincipale extends JFrame implements WindowListener {
                 HelperForm.generateRow(boutonValider,0,10,10,0, HelperForm.ALIGN_RIGHT),
                 BorderLayout.SOUTH);
 
+
+        ouvrirFichier();
+
         setVisible(true);
     }
+
+    public void ouvrirFichier() {
+
+             //--------- GESTION ERREUR -----------
+            ObjectInputStream ois = null;
+
+            try {
+                final FileInputStream fichier = new FileInputStream("personne.eesc");
+                ois = new ObjectInputStream(fichier);
+                Utilisateur utilisateurFichier = (Utilisateur) ois.readObject();
+                System.out.println(utilisateurFichier.getNom());
+
+                ois.close();
+
+            } catch (FileNotFoundException e) {
+                System.out.println("Premiere fois qu'on ouvre l'application");
+
+            } catch (IOException e) {
+                JOptionPane.showMessageDialog(
+                        this,
+                        "Impossible d'ouvrir le fichier");
+
+            } catch (ClassNotFoundException | ClassCastException e) {
+                JOptionPane.showMessageDialog(
+                        this,
+                        "Fichier corrompu");
+            }
+        }
 
     public static void main(String[] args) {
         FlatDarculaLaf.setup();
