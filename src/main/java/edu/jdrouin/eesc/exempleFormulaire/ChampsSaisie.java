@@ -11,21 +11,28 @@ import java.io.IOException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class ChampsSaisie extends Box    {
-
-    Character[] caracteresAutorises = {'a','b','c','d','e','f','g','h','i','j','k','l','m','n','o','p','q','r','s','t','u','v','w','x','y','z','A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z',' '};
+public class ChampsSaisie extends Box {
 
     protected JTextField textField;
     protected JLabel icone = new JLabel();
     protected JLabel message = new JLabel();
-    protected Border borderOriginale;
+
+    protected Border borderOriginal;
+
     protected ImageIcon checkIcon;
     protected ImageIcon errorIcon;
+
     protected String regex;
 
-    public ChampsSaisie(String expression){
+    public ChampsSaisie() {
         super(BoxLayout.Y_AXIS);
-        this.regex=expression;
+        textField = new JTextField();
+        initialiser();
+    }
+
+    public ChampsSaisie(String expression) {
+        super(BoxLayout.Y_AXIS);
+        this.regex = expression;
         textField = new JTextField(){
             @Override
             protected void processKeyEvent(KeyEvent e) {
@@ -40,7 +47,7 @@ public class ChampsSaisie extends Box    {
                     Pattern regex = Pattern.compile(expression);
                     //on transforme le caractère saisi en chaine de texte
                     String lettre = String.valueOf(e.getKeyChar());
-                    //on créait un objet matcher à partire de la regex et la lettre saisie
+                    //on créait un objet matcher à partir de la regex et la lettre saisie
                     Matcher matcher = regex.matcher(lettre);
                     //on vérifie si la lettre correspond à la regex
                     if (matcher.matches()) {
@@ -52,14 +59,7 @@ public class ChampsSaisie extends Box    {
         initialiser();
     }
 
-    public ChampsSaisie(){
-        super(BoxLayout.Y_AXIS);
-        textField = new JTextField();
-        initialiser();
-    }
-
-    public void initialiser(){
-
+    public void initialiser() {
         Box ligne1 = Box.createHorizontalBox();
         ligne1.add(textField);
         ligne1.add(icone);
@@ -71,25 +71,18 @@ public class ChampsSaisie extends Box    {
         ligne2.add(Box.createHorizontalGlue());
         add(ligne2);
 
-        borderOriginale = textField.getBorder();
+        borderOriginal = textField.getBorder();
 
-        //---------Image----------------
         try {
             checkIcon = new ImageIcon(
-                    ImageIO.read(new File("src/main/resources/icones/check.png" )
-                    ));
-
-
+                    ImageIO.read(new File("src/main/resources/icones/check.png"))
+            );
             errorIcon = new ImageIcon(
-                    ImageIO.read(new File("src/main/resources/icones/error.png" )
-                    ));
-
+                    ImageIO.read(new File("src/main/resources/icones/error.png"))
+            );
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-
-
-
 
         textField.addKeyListener(new KeyListener() {
             @Override
@@ -97,7 +90,9 @@ public class ChampsSaisie extends Box    {
             }
             @Override
             public void keyPressed(KeyEvent e) {
-                System.out.println("ok");
+                if(e.getKeyChar() == 'a' || e.getKeyChar() == 'b') {
+                    System.out.println("ok");
+                }
             }
             @Override
             public void keyReleased(KeyEvent e) {
@@ -106,22 +101,20 @@ public class ChampsSaisie extends Box    {
         });
     }
 
-    public void erreur(String texte){
-        textField.setBorder(BorderFactory.createLineBorder(Color.RED));
+    public void erreur(String texte) {
+        textField.setBorder(BorderFactory.createLineBorder(Color.red));
         message.setForeground(Color.RED);
-        message.setFont(new Font("Arial", 12, 9));
         message.setText(texte);
         icone.setIcon(errorIcon);
     }
 
-    public void resetMessage(){
-        textField.setBorder(borderOriginale);
+    public void resetMessage() {
+        textField.setBorder(borderOriginal);
         message.setText("");
         icone.setIcon(null);
     }
 
-
-    public String getText(){
+    public String getText() {
         return textField.getText();
     }
 
@@ -148,6 +141,4 @@ public class ChampsSaisie extends Box    {
     public void setMessage(JLabel message) {
         this.message = message;
     }
-
-
 }
