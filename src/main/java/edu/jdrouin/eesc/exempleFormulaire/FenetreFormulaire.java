@@ -1,15 +1,11 @@
 package edu.jdrouin.eesc.exempleFormulaire;
 
-import com.formdev.flatlaf.FlatDarculaLaf;
-import com.formdev.flatlaf.FlatLightLaf;
 import edu.jdrouin.eesc.exempleFormulaire.model.Pays;
-
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
+import javax.swing.table.DefaultTableModel;
 import java.awt.*;
-import java.awt.event.WindowEvent;
-import java.awt.event.WindowListener;
 import java.io.*;
 import java.util.ArrayList;
 import java.util.regex.Matcher;
@@ -28,11 +24,10 @@ public class FenetreFormulaire extends JPanel  {
     protected JComboBox<Pays> selectPays;
     protected ChampsSaisie champsPrenom;
     protected ChampsSaisie champsEmail;
-    protected ArrayList<Utilisateur> listeUtilisateur;
 
-    public FenetreFormulaire (ArrayList<Utilisateur> listeUtilisateur) {
 
-        this.listeUtilisateur = listeUtilisateur;
+    public FenetreFormulaire (OnClickAjouter callback) {
+
 
         //--------- CREATION ECRAN -----------
         setSize(500,500);
@@ -245,7 +240,7 @@ public class FenetreFormulaire extends JPanel  {
                     champsMarie.isSelected()
             );
 
-            listeUtilisateur.add(nouvelUtilisateur);
+
 
             //on supprime la dernière des virgules
             message = message.substring(0,message.length()-1);
@@ -259,29 +254,34 @@ public class FenetreFormulaire extends JPanel  {
                         JOptionPane.WARNING_MESSAGE);
             }
 
-            ObjectOutputStream oos = null;
 
-            FileOutputStream fichier;
+//            ObjectOutputStream oos = null;
+//
+//            {
+//                try {
+//                    fichier = new FileOutputStream("personne.old.eesc");
+//                    oos = new ObjectOutputStream(fichier);
+//                    oos.writeObject(listeUtilisateur);
+//                    oos.flush();
+//                    oos.close();
+//
+//                    model.addRow(nouvelUtilisateur.getLigneTableau());
+//                    model.fireTableDataChanged();
+//
+//
+//                    JOptionPane.showMessageDialog(
+//                            this,
+//                            "L'utilisateur " + nouvelUtilisateur.getNom() + " a bien été ajouté");
+//
+//                } catch (IOException exception) {
+//
+//                    JOptionPane.showMessageDialog(
+//                            this,
+//                            "Impossible d'enregistrer l'utilisateur");
+//                }
+//            }
 
-            {
-                try {
-                    fichier = new FileOutputStream("personne.eesc");
-                    oos = new ObjectOutputStream(fichier);
-                    oos.writeObject(listeUtilisateur);
-                    oos.flush();
-
-                    JOptionPane.showMessageDialog(
-                            this,
-                            "L'utilisateur " + nouvelUtilisateur.getNom() + " a bien été ajouté");
-
-                } catch (IOException exception) {
-
-                    JOptionPane.showMessageDialog(
-                            this,
-                            "Impossible d'enregistrer l'utilisateur");
-                }
-            }
-
+            callback.executer(nouvelUtilisateur);
         });
 
 
@@ -302,7 +302,7 @@ public class FenetreFormulaire extends JPanel  {
             ObjectInputStream ois = null;
 
             try {
-                final FileInputStream fichier = new FileInputStream("personne.eesc");
+                final FileInputStream fichier = new FileInputStream("personne.old.eesc");
                 ois = new ObjectInputStream(fichier);
                 Utilisateur utilisateurFichier = (Utilisateur) ois.readObject();
 

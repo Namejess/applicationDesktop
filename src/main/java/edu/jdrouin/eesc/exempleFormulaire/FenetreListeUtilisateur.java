@@ -2,25 +2,25 @@ package edu.jdrouin.eesc.exempleFormulaire;
 
 import com.formdev.flatlaf.FlatDarculaLaf;
 import com.formdev.flatlaf.FlatLightLaf;
-import edu.jdrouin.eesc.exempleFormulaire.model.Pays;
 
+import javax.imageio.ImageIO;
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableCellEditor;
+import javax.swing.table.TableCellRenderer;
 import java.awt.*;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.ObjectInputStream;
+import java.io.*;
 import java.util.ArrayList;
 
 public class FenetreListeUtilisateur extends JFrame implements WindowListener {
 
     protected boolean themeSombreActif = true;
     protected DefaultTableModel model;
-    protected ArrayList<Utilisateur> listeUtilisateur;
-
+    protected ArrayList<Utilisateur> listeUtilisateur = new ArrayList<>();
 
     public FenetreListeUtilisateur () {
 
@@ -65,11 +65,38 @@ public class FenetreListeUtilisateur extends JFrame implements WindowListener {
 
         JButton boutonAjoutUtilisateur = new JButton("Ajouter un utilisateur");
 
+        //---------- TRAITEMENT / CALLBACK -------
         boutonAjoutUtilisateur.addActionListener(
                 e -> {
                     JOptionPane.showOptionDialog(
                             null,
-                            new FenetreFormulaire(listeUtilisateur),
+                            new FenetreFormulaire((nouvelUtilisateur) -> {
+                                listeUtilisateur.add(nouvelUtilisateur);
+
+                                ObjectOutputStream oos = null;
+
+                                try {
+                                    FileOutputStream fichier = new FileOutputStream("personne.eesc");
+
+                                    oos = new ObjectOutputStream(fichier);
+                                    oos.writeObject(listeUtilisateur);
+                                    oos.flush();
+                                    oos.close();
+
+                                    model.addRow(nouvelUtilisateur.getLigneTableau());
+                                    model.fireTableDataChanged();
+
+                                    JOptionPane.showMessageDialog(
+                                            this,
+                                            "L'utilisateur " + nouvelUtilisateur.getNom() + " a bien été ajouté");
+
+                                } catch (IOException ex) {
+                                    JOptionPane.showMessageDialog(
+                                            this,
+                                            "Impossible d'enregistrer l'utilisateur");
+                                }
+
+                            }),
                             "Ajouter un utilisateur",
                             JOptionPane.DEFAULT_OPTION,
                             JOptionPane.PLAIN_MESSAGE,
@@ -77,11 +104,6 @@ public class FenetreListeUtilisateur extends JFrame implements WindowListener {
                             new Object[]{},
                             null);
                 });
-
-
-
-
-
 
 
         //-----------------------------------
@@ -111,6 +133,8 @@ public class FenetreListeUtilisateur extends JFrame implements WindowListener {
 
 
         //---------------- TABLE UTILISATEUR ------------------
+
+
         model = new DefaultTableModel();
         model.addColumn("Civilité");
         model.addColumn("Nom");
@@ -121,19 +145,101 @@ public class FenetreListeUtilisateur extends JFrame implements WindowListener {
         model.addColumn("Marié/Pacsé");
         model.addColumn("Actions");
 
+
+
+
+
         JTable tableUtilisateur = new JTable(model);
-        tableUtilisateur.setEnabled(false);
+
+        ImageIcon deleteIcon;
+
+        try {
+            deleteIcon = new ImageIcon(
+                    ImageIO.read(new File("src/main/resources/icones/delete.png"))
+            );
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+
+        ImageIcon editIcon;
+
+        try {
+            editIcon = new ImageIcon(
+                    ImageIO.read(new File("src/main/resources/icones/edit.png"))
+            );
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+
+
+        tableUtilisateur.getColumn("Actions").setCellRenderer(
+                (table, value, isSelected, hasFocus, row, column) -> {
+                    Box ligne = Box.createHorizontalBox();
+
+
+                    JLabel boutonEdit = new JLabel();
+                    boutonEdit.setIcon(editIcon);
+
+                    JLabel boutonDelete = new JLabel();
+                    boutonDelete.setIcon(deleteIcon);
+
+                    ligne.add(Box.createHorizontalGlue());
+                    ligne.add(boutonDelete);
+                    ligne.add(Box.createRigidArea(new Dimension(10, 1)));
+                    ligne.add(boutonEdit);
+                    ligne.add(Box.createHorizontalGlue());
+                    return ligne;
+                }
+        );
+
+        tableUtilisateur.getColumn("Actions").setCellEditor(
+                new DefaultCellEditor(new JCheckBox()) {
+                    public Component getTableCellEditorComponent(
+                            JTable table, Object value, boolean isSelected, int row, int column) {
+                        Box ligne = Box.createHorizontalBox();
+
+
+                        JLabel boutonEdit = new JLabel();
+                        boutonEdit.setIcon(editIcon);
+
+                        JLabel boutonDelete = new JLabel();
+                        boutonDelete.setIcon(deleteIcon);
+
+                        ligne.add(Box.createHorizontalGlue());
+                        ligne.add(boutonDelete);
+                        ligne.add(Box.createRigidArea(new Dimension(10, 1)));
+                        ligne.add(boutonEdit);
+                        ligne.add(Box.createHorizontalGlue());
+
+                        boutonDelete.addMouseListener(new MouseListener() {
+                            @Override
+                            public void mouseReleased(MouseEvent e) {
+
+                                System.out.println("test");
+                            }
+
+                            public void mouseClicked(MouseEvent e) { }
+                            public void mousePressed(MouseEvent e) { }
+                            public void mouseEntered(MouseEvent e) {}
+                            public void mouseExited(MouseEvent e) {}
+                        });
+                        return ligne;
+                    }
+                }
+
+
+
+        );
 
         JScrollPane scrollPaneTableUtilisateur = new JScrollPane(tableUtilisateur);
 
         panneau.add(scrollPaneTableUtilisateur, BorderLayout.CENTER);
-
-
         ouvrirFichier();
-
         setVisible(true);
 
     }
+
+
 
     public void ouvrirFichier() {
 
@@ -141,7 +247,7 @@ public class FenetreListeUtilisateur extends JFrame implements WindowListener {
         ObjectInputStream ois = null;
 
         try {
-            final FileInputStream fichier = new FileInputStream("personne.eesc");
+            final FileInputStream fichier = new FileInputStream("personne.old.eesc");
             ois = new ObjectInputStream(fichier);
             listeUtilisateur = (ArrayList<Utilisateur>) ois.readObject();
 
