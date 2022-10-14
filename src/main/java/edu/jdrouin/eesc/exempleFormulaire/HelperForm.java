@@ -10,6 +10,9 @@ public class HelperForm {
     public static final int ALIGN_RIGHT = 1;
     public static final int ALIGN_LEFT = 2;
 
+    public static final int ALIGN_CENTER = 3;
+
+
     public static Box generateField(String textLabel, Component component){
         return generateField(textLabel, component, 200);
     }
@@ -57,6 +60,8 @@ public class HelperForm {
         Box conteneurHorizontal = Box.createHorizontalBox();
         conteneurVertical.add(conteneurHorizontal);
 
+
+
         //ajout de la marge verticale en bas
         conteneurVertical.add(Box.createRigidArea(new Dimension(1,marginBottom)));
 
@@ -67,10 +72,15 @@ public class HelperForm {
             conteneurHorizontal.add(Box.createHorizontalGlue());
         }
 
+
         conteneurHorizontal.add(component);
 
         //ajout de la marge horizontale à droite
         conteneurHorizontal.add(Box.createRigidArea(new Dimension(marginRight,1)));
+
+        if(alignement == ALIGN_LEFT){
+            conteneurHorizontal.add(Box.createHorizontalGlue());
+        }
 
         return conteneurVertical;
     }

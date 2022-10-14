@@ -11,11 +11,12 @@ import java.awt.*;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 import java.io.*;
+import java.util.ArrayList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 
-public class FenetreFormulaire extends JFrame  {
+public class FenetreFormulaire extends JPanel  {
 
     protected boolean themeSombreActif = true;
 
@@ -27,48 +28,53 @@ public class FenetreFormulaire extends JFrame  {
     protected JComboBox<Pays> selectPays;
     protected ChampsSaisie champsPrenom;
     protected ChampsSaisie champsEmail;
+    protected ArrayList<Utilisateur> listeUtilisateur;
 
-    public FenetreFormulaire() {
+    public FenetreFormulaire (ArrayList<Utilisateur> listeUtilisateur) {
+
+        this.listeUtilisateur = listeUtilisateur;
 
         //--------- CREATION ECRAN -----------
         setSize(500,500);
-        setDefaultCloseOperation(DISPOSE_ON_CLOSE);
+        //setDefaultCloseOperation(DISPOSE_ON_CLOSE);
 
         //ajout du panneau principal avec un layout de 5 zones
         // (NORTH, SOUTH, EAST, WEST, CENTER)
-        JPanel panneau = new JPanel(new BorderLayout());
-        setContentPane(panneau);
-        setLocationRelativeTo(null);
+        //JPanel panneau = new JPanel(new BorderLayout());
+        //setContentPane(panneau);
+       // setLocationRelativeTo(null);
+        setLayout(new BorderLayout());
+        setToolTipText("Formulaire");
 
         ChampsSaisie boite = new ChampsSaisie();
 
-        //--------- BOUTON THEME -----------
-
-        JButton boutonTheme = new JButton("Changer le theme");
-
-        boutonTheme.addActionListener(
-                e -> {
-                    try {
-                        if(themeSombreActif) {
-                            UIManager.setLookAndFeel(new FlatLightLaf());
-                        } else {
-                            UIManager.setLookAndFeel(new FlatDarculaLaf());
-                        }
-                        SwingUtilities.updateComponentTreeUI(this);
-                        themeSombreActif = !themeSombreActif;
-
-                    } catch (UnsupportedLookAndFeelException ex) {
-                        throw new RuntimeException(ex);
-                    }
-                }
-        );
+//        //--------- BOUTON THEME -----------
+//
+//        JButton boutonTheme = new JButton("Changer le theme");
+//
+//        boutonTheme.addActionListener(
+//                e -> {
+//                    try {
+//                        if(themeSombreActif) {
+//                            UIManager.setLookAndFeel(new FlatLightLaf());
+//                        } else {
+//                            UIManager.setLookAndFeel(new FlatDarculaLaf());
+//                        }
+//                        SwingUtilities.updateComponentTreeUI(this);
+//                        themeSombreActif = !themeSombreActif;
+//
+//                    } catch (UnsupportedLookAndFeelException ex) {
+//                        throw new RuntimeException(ex);
+//                    }
+//                }
+//        );
 
 
 
         //---------- BOUTONS DU HAUT -------
-        panneau.add(
-                HelperForm.generateRow(boutonTheme,10,10,0,0, HelperForm.ALIGN_RIGHT),
-                BorderLayout.NORTH);
+//        add(
+//                HelperForm.generateRow(boutonTheme,10,10,0,0, HelperForm.ALIGN_RIGHT),
+//                BorderLayout.NORTH);
 
 
 
@@ -78,7 +84,7 @@ public class FenetreFormulaire extends JFrame  {
         Box boxFormulaire = Box.createVerticalBox();
         //formulaire.setBorder(BorderFactory.createLineBorder(Color.RED));
 
-        panneau.add(boxFormulaire, BorderLayout.CENTER);
+        add(boxFormulaire, BorderLayout.CENTER);
 
 
         //---------------- LISTE CIVILITE ------------------
@@ -239,8 +245,7 @@ public class FenetreFormulaire extends JFrame  {
                     champsMarie.isSelected()
             );
 
-
-
+            listeUtilisateur.add(nouvelUtilisateur);
 
             //on supprime la dernière des virgules
             message = message.substring(0,message.length()-1);
@@ -262,7 +267,7 @@ public class FenetreFormulaire extends JFrame  {
                 try {
                     fichier = new FileOutputStream("personne.eesc");
                     oos = new ObjectOutputStream(fichier);
-                    oos.writeObject(nouvelUtilisateur);
+                    oos.writeObject(listeUtilisateur);
                     oos.flush();
 
                     JOptionPane.showMessageDialog(
@@ -284,14 +289,11 @@ public class FenetreFormulaire extends JFrame  {
 
         boutonValider.setSize(new Dimension(100, 30));
 
-        panneau.add(
+        add(
                 HelperForm.generateRow(boutonValider,0,10,10,0, HelperForm.ALIGN_RIGHT),
                 BorderLayout.SOUTH);
 
 
-        ouvrirFichier();
-
-        setVisible(true);
     }
 
     public void ouvrirFichier() {
